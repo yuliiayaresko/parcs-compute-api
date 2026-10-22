@@ -272,10 +272,13 @@ class Cluster:
 
     def guest_attributes(self, name):
         """Ключі, які машина записала про себе в простір імен parcs/."""
+        # Параметри, яких немає серед іменованих аргументів методу (query_path, filter,
+        # port, start), бібліотека приймає лише в об'єкті запиту.
+        request = compute_v1.GetGuestAttributesInstanceRequest(
+            project=self.project, zone=self.zone, instance=name, query_path="parcs/")
         try:
             attrs = self.stats.call("instances.getGuestAttributes", self.instances.get_guest_attributes,
-                                    project=self.project, zone=self.zone, instance=name,
-                                    query_path="parcs/")
+                                    request=request)
         except exceptions.NotFound:
             return {}  # машина ще нічого не записала
         return {e.key: e.value for e in attrs.query_value.items}
@@ -314,9 +317,9 @@ class Cluster:
     # ----------------------------------------------------------- прибирання
 
     def list_labeled(self):
-        return list(self.stats.call(
-            "instances.list", self.instances.list,
-            project=self.project, zone=self.zone, filter=f"labels.{LABEL_KEY} = {LABEL_VALUE}"))
+        request = compute_v1.ListInstancesRequest(
+            project=self.project, zone=self.zone, filter=f"labels.{LABEL_KEY} = {LABEL_VALUE}")
+        return list(self.stats.call("instances.list", self.instances.list, request=request))
 
     def delete_all(self):
         if self.plan:
@@ -348,11 +351,13 @@ class SerialTail:
         self.offset = 0
 
     def read(self):
+        request = compute_v1.GetSerialPortOutputInstanceRequest(
+            project=self.cluster.project, zone=self.cluster.zone, instance=self.name,
+            port=1, start=self.offset)
         try:
             out = self.cluster.stats.call(
                 "instances.getSerialPortOutput", self.cluster.instances.get_serial_port_output,
-                project=self.cluster.project, zone=self.cluster.zone, instance=self.name,
-                port=1, start=self.offset)
+                request=request)
         except exceptions.GoogleAPICallError:
             return []
         self.offset = out.next_
