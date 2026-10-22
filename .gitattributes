@@ -1,0 +1,3 @@
+# Startup-скрипти виконуються на Linux: з CRLF рядок #!/bin/bash\r дає «bad interpreter».
+*.sh  text eol=lf
+*.py  text eol=lf
