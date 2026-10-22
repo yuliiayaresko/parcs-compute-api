@@ -412,6 +412,17 @@ def run(args):
             return {"parcs-repo": args.repo, "parcs-input": parcs_input}
         return {}
 
+    # Перевірка до try: якщо машини з міткою вже є, їх створив інший запуск
+    # (наприклад, в іншій вкладці Cloud Shell). Падати треба тут, бо finally нижче
+    # видалив би все за міткою — разом із чужим кластером посеред обчислень.
+    if not args.plan:
+        existing = [i.name for i in cluster.list_labeled()]
+        if existing:
+            raise ClusterError(
+                f"у проєкті вже є машини з міткою {LABEL_KEY}={LABEL_VALUE}: {', '.join(existing)}\n"
+                "Схоже, ще працює інший запуск. Дочекайся його кінця, або, якщо він уже\n"
+                "мертвий, видали машини: python3 parcs_cloud.py delete")
+
     try:
         say("Брандмауер")
         cluster.ensure_firewall()
