@@ -341,9 +341,11 @@ class Cluster:
 class SerialTail:
     """Читає вивід послідовного порту порціями, починаючи з того місця, де зупинився.
 
-    Startup-script пише свій stdout у послідовний порт із префіксом startup-script:,
-    тож звідти видно живий лог без ssh.
+    Startup-script дублює свій вивід у порт із міткою PARCS| (startup/common.sh),
+    тож звідти видно живий лог без ssh. Решту виводу порту (ядро, systemd) відкидаємо.
     """
+
+    MARKER = "PARCS| "
 
     def __init__(self, cluster, name):
         self.cluster = cluster
@@ -363,8 +365,8 @@ class SerialTail:
         self.offset = out.next_
         lines = []
         for line in out.contents.splitlines():
-            if "startup-script: " in line:
-                lines.append(line.split("startup-script: ", 1)[1])
+            if self.MARKER in line:
+                lines.append(line.split(self.MARKER, 1)[1].rstrip("\r"))
         return lines
 
     def read_all(self):

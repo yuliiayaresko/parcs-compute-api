@@ -9,6 +9,12 @@
 set -u
 export DEBIAN_FRONTEND=noninteractive
 
+# Увесь вивід скрипта дублюється в послідовний порт із міткою PARCS| — звідти
+# оркестратор показує живий лог через getSerialPortOutput. Покладатися на те, що
+# агент гостьової ОС сам перешле туди вивід startup-script, не можна: у образі
+# Debian 12 цього не сталося, і лог у першому прогоні був порожній.
+exec > >(tee >(sed -u 's/^/PARCS| /' > /dev/ttyS0)) 2>&1
+
 MD=http://metadata.google.internal/computeMetadata/v1/instance
 JDK=openjdk-17-jdk-headless
 WORKDIR=/opt/parcs
