@@ -1,0 +1,7 @@
+машина;роль;тип;insert, с;created, с;installing, с;waiting, с;ready, с;running, с;done, с
+parcs-daemon-1;daemon;e2-standard-2;1.5;15.5;47.4;;65.4;;
+parcs-daemon-2;daemon;e2-standard-2;2.5;15.7;41.7;;88.0;;
+parcs-daemon-3;daemon;e2-standard-2;3.5;16.0;35.9;;59.8;;
+parcs-daemon-4;daemon;e2-standard-2;4.6;16.3;42.1;;93.6;;
+parcs-hosts;hosts-server;e2-micro;5.9;16.5;;;97.9;;
+parcs-app;app;e2-standard-2;6.8;16.8;;;;101.2;326.1
