@@ -1,0 +1,11 @@
+метод;викликів;середня затримка, мс;максимальна, мс
+firewalls.get;1;311;311
+instances.delete;6;322;492
+instances.get;7;244;324
+instances.getGuestAttributes;87;259;642
+instances.getSerialPortOutput;43;240;1503
+instances.insert;6;1068;1263
+instances.list;1;149;149
+instances.setMetadata;2;391;392
+machineTypes.get;2;315;352
+regions.get;1;352;352
